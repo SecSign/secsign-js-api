@@ -1,10 +1,4 @@
 <?php
-
-//
-// SecSign ID Api bridge in php.
-//
-// (c) copyright SecSign Technologies Inc.
-//
 	include ('SecSignIDApi.php');
     
     $send_as_ajax = isset($_REQUEST['isajax']);
@@ -24,6 +18,8 @@
             try
             {
                 $authsession = $secSignIDApi->requestAuthSession($_POST['secsignid'], $_POST['servicename'], $_POST['serviceaddress']);
+                //$response = $authsession->getAuthSessionAsArray();
+                
                 $response = $secSignIDApi->getResponse();
             }
             catch(Exception $e){
