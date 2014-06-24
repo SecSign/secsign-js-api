@@ -1,4 +1,13 @@
 <?php
+
+// $Id: signin-bridge.php,v 1.2 2014/05/28 15:10:23 titus Exp $
+
+//
+// SecSign ID Api php bridge to redirect requests sent by javascript.
+//
+// (c) 2014 SecSign Technologies Inc.
+//
+
 	include ('SecSignIDApi.php');
     
     $send_as_ajax = isset($_REQUEST['isajax']);
