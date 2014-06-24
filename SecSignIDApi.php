@@ -1,93 +1,97 @@
 <?php
+
+// $Id: SecSignIDApi.php,v 1.25 2014/05/28 15:10:23 titus Exp $
+    
 //
 // SecSign ID Api in php.
 //
-// (c) copyright SecSign Technologies Inc.
+// (c) 2014 SecSign Technologies Inc.
 //
-    define("SCRIPT_REVISION", '$Revision: 1.23 $');
     
-    class AuthSession
-    {
-        /**
+define("SCRIPT_REVISION", '$Revision: 1.25 $');
+    
+class AuthSession
+{
+        /*
          * No State: Used when the session state is undefined. 
          */
         const NOSTATE = 0;
         
-        /**
+        /*
          * Pending: The session is still pending for authentication.
          */
         const PENDING = 1;
         
-        /**
+        /*
          * Expired: The authentication timeout has been exceeded.
          */
         const EXPIRED = 2;
         
-        /**
+        /*
          * Authenticated: The user was successfully authenticated.
          */
         const AUTHENTICATED = 3;
         
-        /**
+        /*
          * Denied: The user denied this session.
          */
         const DENIED = 4;
 		
-        /**
+        /*
          * Suspended: The server suspended this session, because another authentication request was received while this session was still pending.
          */
         const SUSPENDED = 5;
         
-        /**
+        /*
          * Canceled: The service has canceled this session.
          */
         const CANCELED = 6;
         
-        /**
+        /*
          * Fetched: The device has already fetched the session, but the session hasn't been authenticated or denied yet.
          */
         const FETCHED = 7;
     
-        /**
+        /*
          * Invalid: This session has become invalid.
          */
         const INVALID = 8;
         
         
-        /** 
+        /* 
          * the secsign id the authentication session has been craeted for
          */
         private $secSignID      = NULL;
         
-        /**
+        /*
          * authentication session id
          */
         private $authSessionID   = NULL;
         
-        /**
+        /*
          * the name of the requesting service. this will be shown at the smartphone
          */
         private $requestingServiceName = NULL;
         
-        /**
+        /*
          * the address, a valid url, of the requesting service. this will be shown at the smartphone
          */
         private $requestingServiceAddress = NULL;
         
-        /**
+        /*
          * the request ID is similar to a server side session ID. 
          * it is generated after a authentication session has been created. all other request like dispose, withdraw or to get the auth session state
          * will be rejected if a request id is not specified.
          */
         private $requestID        = NULL;
         
-        /**
+        /*
          * icon data of the so called access pass. the image data needs to be displayed otherwise the user does not know which access apss he needs to choose in order to accept the authentication session.
          */
         private $authSessionIconData = NULL;
         
         
-        /**
+        /*
          * Getter for secsign id
          */
         function getSecSignID()
@@ -95,7 +99,7 @@
             return $this->secSignID;
         }
         
-        /**
+        /*
          * Getter for auth session id
          */
         function getAuthSessionID()
@@ -103,7 +107,7 @@
             return $this->authSessionID;
         }
         
-        /**
+        /*
          * Getter for auth session requesting service
          */
         function getRequestingServiceName()
@@ -111,7 +115,7 @@
             return $this->requestingServiceName;
         }
         
-        /**
+        /*
          * Getter for auth session requesting service
          */
         function getRequestingServiceAddress()
@@ -119,7 +123,7 @@
             return $this->requestingServiceAddress;
         }
         
-        /**
+        /*
          * Getter for request id
          */
         function getRequestID()
@@ -127,7 +131,7 @@
             return $this->requestID;
         }
         
-        /**
+        /*
          * Getter for icon data which needs to be display
          */
         function getIconData()
@@ -135,7 +139,7 @@
             return $this->authSessionIconData;
         }
         
-        /**
+        /*
          * method to get string representation of this authentication session object
          */
         function __toString()
@@ -143,7 +147,7 @@
             return $this->authSessionID . " (" . $this->secSignID . ", " . $this->requestingServiceAddress . ", icondata=" . $this->authSessionIconData . ")";
         }
         
-        /**
+        /*
          * builds an url parameter string like key1=value1&key2=value2&foo=bar
          */
         function getAuthSessionAsArray()
@@ -157,7 +161,7 @@
         }
         
         
-        /**
+        /*
          * Creates/Fills the auth session obejct using the given array. The array must use secsignid, auth session id etc as keys.
          */
         function createAuthSessionFromArray($array, $ignoreOptionalParameter = false)
@@ -194,15 +198,18 @@
             $this->requestingServiceAddress = $array['serviceaddress'];
             $this->requestID                = $array['requestid'];
         }
-    }
+}
  
          
-    /**
-     * PHP class to connect to a secsign id server. the class will check secsign id server certificate and request for authentication session generation for a given
-     * user id which is called secsign id. Each authentication session generation needs a new instance of this class.
-     */
-    class SecSignIDApi
-    {
+/*
+* PHP class to connect to a secsign id server. the class will check secsign id server certificate and request for authentication session generation for a given
+* user id which is called secsign id. Each authentication session generation needs a new instance of this class.
+*
+* @version $Id: SecSignIDApi.php,v 1.25 2014/05/28 15:10:23 titus Exp $
+* @author SecSign Technologies Inc.
+*/
+class SecSignIDApi
+{
         // once created the api can be used to create a single request for a certain specified userid
         private $secSignIDServer     = NULL;
         private $secSignIDServerPort = NULL;
@@ -293,7 +300,7 @@
             }
         }
         
-        /**
+        /*
          * Sets an optional plugin name
          */
         function setPluginName($pluginName)
@@ -301,7 +308,7 @@
             $this->pluginName = $pluginName;
         }
         
-        /**
+        /*
          * Gets last response
          */
         function getResponse()
@@ -310,7 +317,7 @@
         }
         
         
-        /**
+        /*
          * Send query to secsign id server to create an authentication session for a certain secsign id. This method returns the authentication session itself.
          */
         function requestAuthSession($secsignid, $servicename, $serviceadress)
@@ -350,7 +357,7 @@
         }
         
         
-        /**
+        /*
          * Gets the authentication session state for a certain secsign id whether the authentication session is still pending or it was accepted or denied.
          */
         function getAuthSessionState($authSession)
@@ -370,7 +377,7 @@
         }
         
         
-        /**
+        /*
          * Cancel the given auth session.
          */
         function cancelAuthSession($authSession)
@@ -389,7 +396,7 @@
             return $response['authsessionstate'];
         }
         
-        /**
+        /*
          * Releases an authentication session if it was accepted and not used any longer
          */
         function releaseAuthSession($authSession)
@@ -408,7 +415,7 @@
             return $response['authsessionstate'];
         }
         
-        /**
+        /*
          * build an array with all parameters which has to be send to server
          */
         private function buildParameterArray($parameter, $authSession)
@@ -429,7 +436,7 @@
         }
         
         
-        /**
+        /*
          * sends given parameters to secsign id server and wait given amount
          * of seconds till the connection is timed out
          */
@@ -491,7 +498,7 @@
         }
         
         
-        /**
+        /*
          * checks the secsign id server response string
          */
         private function checkResponse($response, $throwExcIfError)
@@ -569,6 +576,6 @@
             
             return $ch;
         }
-    }
+}
 	
 ?>
