@@ -27,7 +27,7 @@ or visit <https://www.secsign.com> for more informations.
 **Files**
 
 * `SecSignIDApi.js` - the file contains two classes SecSignIDApi and AuthSession. The class SecSignIDApi will care about the communication with the ID server
-* `SecSignIDApi.php` - the SecSign ID PHP Api
+* `SecSignIDApi.php` - the SecSign ID PHP Api <https://github.com/SecSign/secsign-php-api>
 * `signin-bridge.php` - the php bridge with routes the incoming requests send by the SecSign ID Api to the ID server
 
 **Requirements**
