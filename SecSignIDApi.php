@@ -1,6 +1,6 @@
 <?php
 
-// $Id: SecSignIDApi.php,v 1.25 2014/05/28 15:10:23 titus Exp $
+// $Id: SecSignIDApi.php,v 1.26 2014/09/04 13:44:37 jwollner Exp $
     
 //
 // SecSign ID Api in php.
@@ -8,7 +8,7 @@
 // (c) 2014 SecSign Technologies Inc.
 //
     
-define("SCRIPT_REVISION", '$Revision: 1.25 $');
+define("SCRIPT_REVISION", '$Revision: 1.26 $');
     
 class AuthSession
 {
@@ -193,7 +193,7 @@ class AuthSession
             
             $this->secSignID                = $array['secsignid'];
             $this->authSessionID            = $array['authsessionid'];
-            $this->authSessionIconData      = $array['authsessionicondata'];
+            if (isset($array['authsessionicondata'])) $this->authSessionIconData      = $array['authsessionicondata'];
             $this->requestingServiceName    = $array['servicename'];
             $this->requestingServiceAddress = $array['serviceaddress'];
             $this->requestID                = $array['requestid'];
@@ -205,7 +205,7 @@ class AuthSession
 * PHP class to connect to a secsign id server. the class will check secsign id server certificate and request for authentication session generation for a given
 * user id which is called secsign id. Each authentication session generation needs a new instance of this class.
 *
-* @version $Id: SecSignIDApi.php,v 1.25 2014/05/28 15:10:23 titus Exp $
+* @version $Id: SecSignIDApi.php,v 1.26 2014/09/04 13:44:37 jwollner Exp $
 * @author SecSign Technologies Inc.
 */
 class SecSignIDApi
@@ -519,8 +519,12 @@ class SecSignIDApi
             $valuePairs = explode("&", $response);
             foreach($valuePairs as $pair)
             {
-                list($key, $value) = explode("=", $pair, 2);
-                $responseArray[$key] = $value;
+            	$exploded = explode("=", $pair, 2);
+            	if (count($exploded) == 2)
+            	{
+                	list($key, $value) = $exploded;
+                	$responseArray[$key] = $value;
+                }
             }
             
             // check if server send a parameter named 'error'
