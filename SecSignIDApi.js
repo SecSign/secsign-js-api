@@ -1,4 +1,4 @@
-// $Id: SecSignIDApi.js,v 1.16 2014/06/24 14:26:38 titus Exp $
+// $Id: SecSignIDApi.js,v 1.17 2014/08/27 16:26:56 jwollner Exp $
 
 
 /*!
@@ -25,16 +25,20 @@ String.prototype.trim = function()
  * user id which is called secsign id. 
  * Each authentication session generation needs a new instance of this class.
  *
- * @version $Id: SecSignIDApi.js,v 1.16 2014/06/24 14:26:38 titus Exp $
+ * @version $Id: SecSignIDApi.js,v 1.17 2014/08/27 16:26:56 jwollner Exp $
  * @author SecSign Technologies Inc.
  */
 function SecSignIDApi(options)
 {
     var asynchronous = true;
+    var posturl = "/";
     
     if(options){
         if("async" in options){
             asynchronous = options["async"];
+        }
+    if("posturl" in options){
+            posturl = options["posturl"];
         }
     }
     
@@ -148,7 +152,7 @@ function SecSignIDApi(options)
         // send request
         var request = $.ajax({
             type    : "POST",
-            url     : "/",
+            url     : posturl,
             data    : paramStr,
             async   : asynchronous
         });
