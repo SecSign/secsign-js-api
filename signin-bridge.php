@@ -1,6 +1,6 @@
 <?php
 
-// $Id: signin-bridge.php,v 1.2 2014/05/28 15:10:23 titus Exp $
+// $Id: signin-bridge.php,v 1.3 2014/09/04 13:18:14 jwollner Exp $
 
 //
 // SecSign ID Api php bridge to redirect requests sent by javascript.
@@ -38,13 +38,17 @@
             
             try
             {
+            	$servicename = "";
+            	if (isset($_POST['servicename'])) $servicename = $_POST['servicename'];
+            	$serviceaddress = "";
+            	if (isset($_POST['serviceaddress'])) $serviceaddress = $_POST['serviceaddress'];
                 $authsession = new AuthSession();
                 $authsession->createAuthSessionFromArray(array(
                                     'requestid' => $_POST['requestid'],
                                     'secsignid' => $_POST['secsignid'],
                                     'authsessionid' => $_POST['authsessionid'],
-                                    'servicename' => $_POST['servicename'],
-                                    'serviceaddress' => $_POST['serviceaddress']
+                                    'servicename' => $servicename,
+                                    'serviceaddress' => $serviceaddress
                                     ), true);
     
                 $authSessionState = $secSignIDApi->getAuthSessionState($authsession);
