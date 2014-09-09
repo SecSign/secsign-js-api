@@ -21,7 +21,7 @@ This javascript API allows a secure login using a private key on a smart phone r
 
 
 Check out the included example `example.pl` to see how it works or 
-have a look at the how to use tutorial for PHP <https://www.secsign.com/en/php-integrate-tutorial.html>
+have a look at the how to use tutorial for PHP <https://www.secsign.com/php-tutorial/>
 or visit <https://www.secsign.com> for more informations.
 
 **Files**
