@@ -1,6 +1,6 @@
 <?php
 
-// $Id: SecSignIDApi.php,v 1.26 2014/09/04 13:44:37 jwollner Exp $
+// $Id: SecSignIDApi.php,v 1.27 2014/10/10 15:23:28 titus Exp $
     
 //
 // SecSign ID Api in php.
@@ -8,7 +8,7 @@
 // (c) 2014 SecSign Technologies Inc.
 //
     
-define("SCRIPT_REVISION", '$Revision: 1.26 $');
+define("SCRIPT_REVISION", '$Revision: 1.27 $');
     
 class AuthSession
 {
@@ -193,10 +193,12 @@ class AuthSession
             
             $this->secSignID                = $array['secsignid'];
             $this->authSessionID            = $array['authsessionid'];
-            if (isset($array['authsessionicondata'])) $this->authSessionIconData      = $array['authsessionicondata'];
             $this->requestingServiceName    = $array['servicename'];
             $this->requestingServiceAddress = $array['serviceaddress'];
             $this->requestID                = $array['requestid'];
+            
+            // everything else must exist
+        	if(isset($array['authsessionicondata'])) $this->authSessionIconData      = $array['authsessionicondata'];
         }
 }
  
@@ -205,7 +207,7 @@ class AuthSession
 * PHP class to connect to a secsign id server. the class will check secsign id server certificate and request for authentication session generation for a given
 * user id which is called secsign id. Each authentication session generation needs a new instance of this class.
 *
-* @version $Id: SecSignIDApi.php,v 1.26 2014/09/04 13:44:37 jwollner Exp $
+* @version $Id: SecSignIDApi.php,v 1.27 2014/10/10 15:23:28 titus Exp $
 * @author SecSign Technologies Inc.
 */
 class SecSignIDApi
