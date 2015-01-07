@@ -1,4 +1,4 @@
-// $Id: SecSignIDApi.js,v 1.19 2014/12/15 16:37:03 titus Exp $
+// $Id: SecSignIDApi.js,v 1.20 2015/01/06 17:19:56 titus Exp $
 
 
 /*!
@@ -25,7 +25,7 @@ String.prototype.trim = function()
  * user id which is called secsign id. 
  * Each authentication session generation needs a new instance of this class.
  *
- * @version $Id: SecSignIDApi.js,v 1.19 2014/12/15 16:37:03 titus Exp $
+ * @version $Id: SecSignIDApi.js,v 1.20 2015/01/06 17:19:56 titus Exp $
  * @author SecSign Technologies Inc.
  */
 function SecSignIDApi(options)
@@ -44,7 +44,6 @@ function SecSignIDApi(options)
     	if("posturl" in options){
             posturl = options["posturl"];
         }
-        
         if("pluginname" in options){
             this.pluginName = options["pluginname"];
         }
