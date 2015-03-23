@@ -1,4 +1,4 @@
-// $Id: SecSignIDApi.js,v 1.20 2015/01/06 17:19:56 titus Exp $
+// $Id: SecSignIDApi.js,v 1.21 2015/03/23 14:45:45 titus Exp $
 
 
 /*!
@@ -25,7 +25,7 @@ String.prototype.trim = function()
  * user id which is called secsign id. 
  * Each authentication session generation needs a new instance of this class.
  *
- * @version $Id: SecSignIDApi.js,v 1.20 2015/01/06 17:19:56 titus Exp $
+ * @version $Id: SecSignIDApi.js,v 1.21 2015/03/23 14:45:45 titus Exp $
  * @author SecSign Technologies Inc.
  */
 function SecSignIDApi(options)
@@ -144,12 +144,11 @@ function SecSignIDApi(options)
         if(parameterArray == null || !(parameterArray instanceof Array)){
             throw "Parameter array is not an instance of Array";
         }
-        parameterArray['secsignid'] = encodeURIComponent(parameterArray['secsignid']);
-        
+
         var paramStr = "";
         for (var key in parameterArray) {
             if(key && parameterArray.hasOwnProperty(key)){
-                paramStr = paramStr + key + "=" + parameterArray[key] + "&";
+                paramStr = paramStr + key + "=" + encodeURIComponent(parameterArray[key]) + "&";
             }
         }
 
@@ -195,16 +194,15 @@ function SecSignIDApi(options)
         var regex = new RegExp("&", "g");
         var uriDecoding = false;
 
-        var parts = response.split(regex);
         var map = {};
-        jQuery(parts).each(function(){
-            var idx = this.indexOf("=");
+        var parts = response.split(regex);
+        for(var i = 0; i < parts.length; i++){
+        	var keyValuePair = parts[i];
+        	var idx = keyValuePair.indexOf("=");
             if(idx > -1){
-                var key = this.substring(0, idx);
-                var value = this.substring(idx+1);
+                var key = keyValuePair.substring(0, idx).trim();
+                var value = keyValuePair.substring(idx+1).trim();
                 
-                key = key.trim();
-                value = value.trim();
                 if(key){
                     if(uriDecoding == true){
                         map[key] = decodeURIComponent(value);
@@ -213,7 +211,8 @@ function SecSignIDApi(options)
                     }
                 }
             }
-        });
+        }
+        
         return map;
     };
 }
