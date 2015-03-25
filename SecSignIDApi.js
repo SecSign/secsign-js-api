@@ -1,4 +1,4 @@
-// $Id: SecSignIDApi.js,v 1.23 2015/03/25 15:33:49 titus Exp $
+// $Id: SecSignIDApi.js,v 1.24 2015/03/25 16:20:22 titus Exp $
 
 
 /*!
@@ -11,7 +11,7 @@
  * user id which is called secsign id. 
  * Each authentication session generation needs a new instance of this class.
  *
- * @version $Id: SecSignIDApi.js,v 1.23 2015/03/25 15:33:49 titus Exp $
+ * @version $Id: SecSignIDApi.js,v 1.24 2015/03/25 16:20:22 titus Exp $
  * @author SecSign Technologies Inc.
  */
 function SecSignIDApi(options)
@@ -200,55 +200,10 @@ SecSignIDApi.prototype.createResponseMap = function(response){
 /**
  * Javascript class to encapsulate an object with data about an authentication session
  *
- * @version $Id: SecSignIDApi.js,v 1.23 2015/03/25 15:33:49 titus Exp $
+ * @version $Id: SecSignIDApi.js,v 1.24 2015/03/25 16:20:22 titus Exp $
  * @author SecSign Technologies Inc.
  */
 function AuthSession(){
-	//
-	// No State: Used when the session state is undefined. 
-	//
-	var NOSTATE = 0;
-
-	//
-	// Pending: The session is still pending for authentication.
-	//
-	var PENDING = 1;
-
-	//
-	// Expired: The authentication timeout has been exceeded.
-	//
-	var EXPIRED = 2;
-
-	//
-	// Authenticated: The user was successfully authenticated.
-	//
-	var AUTHENTICATED = 3;
-
-	//
-	// Denied: The user denied this session.
-	//
-	var DENIED = 4;
-
-	//
-	// Suspended: The server suspended this session, because another authentication request was received while this session was still pending.
-	//
-	var SUSPENDED = 5;
-
-	//
-	// Canceled: The service has canceled this session.
-	//
-	var CANCELED = 6;
-
-	//
-	// Fetched: The device has already fetched the session, but the session hasn't been authenticated or denied yet.
-	//
-	var FETCHED = 7;
-
-	//
-	// Invalid: This session has become invalid.
-	//
-	var INVALID = 8;
-
 }
 
 
@@ -256,6 +211,51 @@ function AuthSession(){
 AuthSession.prototype.toString = function(){
 	return "AuthSession";
 }
+
+//
+// No State: Used when the session state is undefined. 
+//
+AuthSession.NOSTATE = 0;
+
+//
+// Pending: The session is still pending for authentication.
+//
+AuthSession.PENDING = 1;
+
+//
+// Expired: The authentication timeout has been exceeded.
+//
+AuthSession.EXPIRED = 2;
+
+//
+// Authenticated: The user was successfully authenticated.
+//
+AuthSession.AUTHENTICATED = 3;
+
+//
+// Denied: The user denied this session.
+//
+AuthSession.DENIED = 4;
+
+//
+// Suspended: The server suspended this session, because another authentication request was received while this session was still pending.
+//
+AuthSession.SUSPENDED = 5;
+
+//
+// Canceled: The service has canceled this session.
+//
+AuthSession.CANCELED = 6;
+
+//
+// Fetched: The device has already fetched the session, but the session hasn't been authenticated or denied yet.
+//
+AuthSession.FETCHED = 7;
+
+//
+// Invalid: This session has become invalid.
+//
+AuthSession.INVALID = 8;
 
     
 // @deprecated: trim() exists as normal function in javascript String object
