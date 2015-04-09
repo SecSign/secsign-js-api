@@ -1,8 +1,8 @@
-// $Id: SecSignIDApi.js,v 1.24 2015/03/25 16:20:22 titus Exp $
+// $Id: SecSignIDApi.js,v 1.26 2015/04/09 13:51:54 titus Exp $
 
 
 /*!
- * (c) 2014 SecSign Technologies Inc.
+ * (c) 2014, 2015 SecSign Technologies Inc.
  */
  
 
@@ -11,7 +11,7 @@
  * user id which is called secsign id. 
  * Each authentication session generation needs a new instance of this class.
  *
- * @version $Id: SecSignIDApi.js,v 1.24 2015/03/25 16:20:22 titus Exp $
+ * @version $Id: SecSignIDApi.js,v 1.26 2015/04/09 13:51:54 titus Exp $
  * @author SecSign Technologies Inc.
  */
 function SecSignIDApi(options)
@@ -200,7 +200,7 @@ SecSignIDApi.prototype.createResponseMap = function(response){
 /**
  * Javascript class to encapsulate an object with data about an authentication session
  *
- * @version $Id: SecSignIDApi.js,v 1.24 2015/03/25 16:20:22 titus Exp $
+ * @version $Id: SecSignIDApi.js,v 1.26 2015/04/09 13:51:54 titus Exp $
  * @author SecSign Technologies Inc.
  */
 function AuthSession(){
@@ -269,7 +269,7 @@ AuthSession.INVALID = 8;
 //
 // merges the objects together. if clone is true a new object is created
 //
-var merge = function(obj1, obj2, clone){
+function merge(obj1, obj2, clone){
 	if(clone === true){
 		var newobj = _merge({}, obj1);
 		return _merge(newobj, obj2);
@@ -281,7 +281,7 @@ var merge = function(obj1, obj2, clone){
 //
 // merges the objects together. if clone is true a new object is created
 //
-var _merge = function(obj1, obj2){
+function _merge(obj1, obj2){
 	for(var key in obj2){
 		if(obj2.hasOwnProperty(key)){
 			obj1[key] = obj2[key]; 
