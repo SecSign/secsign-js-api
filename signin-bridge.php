@@ -8,7 +8,7 @@
 // (c) 2014 SecSign Technologies Inc.
 //
 
-	include ('SecSignIDApi.php');
+	include ('phpApi/SecSignIDApi.php');
     
     $send_as_ajax = isset($_REQUEST['isajax']);
     $content_type = $send_as_ajax ? "text/xml" : "text/plain";
