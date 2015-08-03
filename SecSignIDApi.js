@@ -1,6 +1,3 @@
-// $Id: SecSignIDApi.js,v 1.26 2015/04/09 13:51:54 titus Exp $
-
-
 /*!
  * (c) 2014, 2015 SecSign Technologies Inc.
  */
@@ -11,7 +8,6 @@
  * user id which is called secsign id. 
  * Each authentication session generation needs a new instance of this class.
  *
- * @version $Id: SecSignIDApi.js,v 1.26 2015/04/09 13:51:54 titus Exp $
  * @author SecSign Technologies Inc.
  */
 function SecSignIDApi(options)
@@ -21,7 +17,8 @@ function SecSignIDApi(options)
 		async : true,
 		posturl : "/",
 		referer : 'SecSignIDApi_JS',
-		pluginname : 'SecSignIDApi_JS'
+		pluginname : 'SecSignIDApi_JS',
+		version : "1.29"
 	};
 	
 	_merge(this, merge(defaultsettings, options, true));
@@ -38,19 +35,30 @@ function SecSignIDApi(options)
 //
 // Send query to secsign id server to create an authentication session for a certain secsign id.
 //
-SecSignIDApi.prototype.requestAuthSession = function(secsignid, servicename, serviceadress, timezone, callbackFunction) {
-	if(secsignid == null || secsignid === ""){
-		throw "SecSign ID is null.";
+SecSignIDApi.prototype.requestAuthSession = function(secsignid, servicename, serviceaddress, timezone, successCallbackFunc) {
+	if(!secsignid){
+		throw new Error("SecSign ID is null.");
 	}
-	if(servicename == null || servicename === ""){
-	   throw "Servicename is null.";
+	if(!servicename){
+	   throw new Error("Servicename is null.");
+	}
+	if(!serviceaddress){
+	   throw new Error("Serviceaddress is null.");
+	}
+	
+	// ensure that the secsign id is lower case
+	secsignid = secsignid.toLowerCase().trim();
+
+	// check again. probably just spacess which will ne empty after trim()
+	if(!secsignid){
+		throw new Error("SecSign ID is null.");
 	}
 
 	var requestParameter = {
 		'request' : 'ReqRequestAuthSession',
 		'secsignid' : secsignid,
 		'servicename' : servicename,
-		'serviceaddress' : serviceadress
+		'serviceaddress' : serviceaddress
 	};
 	
 	if(this.pluginname){
@@ -60,7 +68,7 @@ SecSignIDApi.prototype.requestAuthSession = function(secsignid, servicename, ser
 	if(timezone){
 		requestParameter['timezone'] = timezone;
 	}
-	return this.sendRequest(requestParameter, callbackFunction);
+	return this.sendRequest(requestParameter, successCallbackFunc);
 };
 
 
@@ -68,13 +76,17 @@ SecSignIDApi.prototype.requestAuthSession = function(secsignid, servicename, ser
 // Gets the authentication session state for a certain secsign id whether the authentication session is still pending or it was accepted or denied.
 //
 SecSignIDApi.prototype.getAuthSessionState = function(secsignid, requestId, authsessionId, callbackFunction) {
-			var requestParameter = {
-				'request' : 'ReqGetAuthSessionState',
-				'secsignid' : secsignid,
-				'authsessionid' : authsessionId,
-				'requestid' : requestId
-			};
-			return this.sendRequest(requestParameter, callbackFunction);
+	
+	// ensure that the secsign id is lower case
+	secsignid = secsignid.toLowerCase();
+	
+	var requestParameter = {
+		'request' : 'ReqGetAuthSessionState',
+		'secsignid' : secsignid,
+		'authsessionid' : authsessionId,
+		'requestid' : requestId
+	};
+	return this.sendRequest(requestParameter, callbackFunction);
 };
 
 
@@ -82,6 +94,9 @@ SecSignIDApi.prototype.getAuthSessionState = function(secsignid, requestId, auth
 // Cancel the given auth session.
 //
 SecSignIDApi.prototype.cancelAuthSession = function(secsignid, requestId, authsessionId, callbackFunction) {
+	// ensure that the secsign id is lower case
+	secsignid = secsignid.toLowerCase();
+	
 	var requestParameter = {
 		'request' : 'ReqCancelAuthSession',
 		'secsignid' : secsignid,
@@ -96,6 +111,9 @@ SecSignIDApi.prototype.cancelAuthSession = function(secsignid, requestId, authse
 // Releases an authentication session if it was accepted and not used any longer 
 //
 SecSignIDApi.prototype.releaseAuthSession = function(secsignid, requestId, authsessionId, callbackFunction) {
+	// ensure that the secsign id is lower case
+	secsignid = secsignid.toLowerCase();
+	
 	var requestParameter = {
 		'request' : 'ReqReleaseAuthSession',
 		'secsignid' : secsignid,
@@ -111,7 +129,8 @@ SecSignIDApi.prototype.releaseAuthSession = function(secsignid, requestId, auths
 //
 SecSignIDApi.prototype.sendRequest = function(params, callbackFunction){
 	if(!params){
-		throw "Parameter array is undefined or empty";
+		//throw "Parameter array is undefined or empty";
+		params = {};
 	}
 	
 	// merge default parameter which are send at every request
@@ -200,7 +219,6 @@ SecSignIDApi.prototype.createResponseMap = function(response){
 /**
  * Javascript class to encapsulate an object with data about an authentication session
  *
- * @version $Id: SecSignIDApi.js,v 1.26 2015/04/09 13:51:54 titus Exp $
  * @author SecSign Technologies Inc.
  */
 function AuthSession(){

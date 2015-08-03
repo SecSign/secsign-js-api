@@ -6,7 +6,7 @@
 // (c) 2014, 2015 SecSign Technologies Inc.
 //
     
-define("SCRIPT_VERSION", '1.40');
+define("SCRIPT_VERSION", '1.43');
      
          
 /*
@@ -50,8 +50,6 @@ class SecSignIDApi
             // use a constant string rather than using the __CLASS__ definition 
             // because this could cause problems when the class is in a submodule
             $this->referer = "SecSignIDApi_PHP";
-        	//$this->referer = __CLASS__ . "_PHP";
-            //$this->referer = substr(strrchr(__CLASS__, "\\"), 1) . "_PHP";
         }
         
         /*
@@ -137,21 +135,30 @@ class SecSignIDApi
         {
             $this->log("Call of function 'requestAuthSession'.");
             
-            if(! isset($servicename)){
+            if(empty($servicename)){
                 $this->log("Parameter \$servicename must not be null.");
                 throw new Exception("Parameter \$servicename must not be null.");
             }
             
-            if(! isset($serviceadress)){
+            if(empty($serviceadress)){
                 $this->log("Parameter \$serviceadress must not be null.");
                 throw new Exception("Parameter \$serviceadress must not be null.");
             }
             
-            if(! isset($secsignid)){
+            if(empty($secsignid)){
                 $this->log("Parameter \$secsignid must not be null.");
                 throw new Exception("Parameter \$secsignid must not be null.");
             }
+
+			// secsign id is always key insensitive. comvert to lower case and trim whitespace
+            $secsignid = trim(strtolower($secsignid));
             
+            // check again. probably just spacess which will ne empty after trim()
+            if(empty($secsignid)){
+                $this->log("Parameter \$secsignid must not be null.");
+                throw new Exception("Parameter \$secsignid must not be null.");
+            }
+
             $requestParameter = array('request' => 'ReqRequestAuthSession',
                                       'secsignid' => $secsignid,
                                       'servicename' => $servicename,
@@ -239,7 +246,7 @@ class SecSignIDApi
             if(isset($authSession))
             {
                 // add auth session data to mandatory parameter array
-                $authSessionData = array('secsignid' => $authSession->getSecSignID(),
+                $authSessionData = array('secsignid' => strtolower($authSession->getSecSignID()),
                                          'authsessionid'  => $authSession->getAuthSessionID(),
                                          'requestid' => $authSession->getRequestID());
                 
