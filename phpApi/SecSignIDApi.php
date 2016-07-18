@@ -6,7 +6,7 @@
 // (c) 2014, 2015 SecSign Technologies Inc.
 //
     
-define("SCRIPT_VERSION", '1.43');
+define("SCRIPT_VERSION", '1.44');
      
          
 /*
