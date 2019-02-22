@@ -1,5 +1,5 @@
 /*!
- * (c) 2014, 2015, 2016 SecSign Technologies Inc.
+ * (c) 2014 - 2019 SecSign Technologies Inc.
  */
  
 
@@ -19,7 +19,7 @@ function SecSignIDApi(options)
 		posturl : "/",
 		referer : 'SecSignIDApi_JS',
 		pluginname : 'SecSignIDApi_JS',
-		version : "1.34",
+		version : "1.39",
 		optionalparams : null
 	};
 	
@@ -67,7 +67,7 @@ SecSignIDApi.prototype.requestAuthSession = function(options) {
 	// ensure that the secsign id is lower case
 	secsignid = options.secsignid.toLowerCase().trim();
 	
-	// check again. probably just spacess which will ne empty after trim()
+	// check again. probably just spaces which will be empty after trim()
 	if(!options.secsignid){
 		throw new Error("SecSign ID is null.");
 	}
@@ -111,6 +111,10 @@ SecSignIDApi.prototype.getAuthSessionState = function(options) {
 		throw new Error("No options given to get authentication session state.");
 	}
 	
+	if(!options.secsignid || !options.authsessionid || !options.requestid){
+		throw new Error("Missing values in options to get authentication session state.");
+	}
+	
 	/*
 	options = {
 		secsignid : "titus",
@@ -141,6 +145,10 @@ SecSignIDApi.prototype.cancelAuthSession = function(options) {
 		throw new Error("No options given to cancel authentication session.");
 	}
 	
+	if(!options.secsignid || !options.authsessionid || !options.requestid){
+		throw new Error("Missing values in options to cancel authentication session.");
+	}
+	
 	/*
 	options = {
 		secsignid : "titus",
@@ -154,36 +162,6 @@ SecSignIDApi.prototype.cancelAuthSession = function(options) {
 
 	var requestParameter = {
 		'request' : 'ReqCancelAuthSession',
-		'secsignid' : options.secsignid.toLowerCase(), // ensure that the secsign id is lower case
-		'authsessionid' : options.authsessionid,
-		'requestid' : options.requestid
-	};
-	return this.sendRequest(requestParameter, options.callbackFunction);
-};
-
-
-//
-// Releases an authentication session if it was accepted and not used any longer 
-//
-SecSignIDApi.prototype.releaseAuthSession = function(options) {
-	
-	if(!options){
-		throw new Error("No options given to release authentication session.");
-	}
-	
-	/*
-	options = {
-		secsignid : "titus",
-		requestid : "98723408097328623947235",
-		authsessionid : "-872346324",
-		callbackFunction : function(){
-			...
-		}
-	}
-	*/
-
-	var requestParameter = {
-		'request' : 'ReqReleaseAuthSession',
 		'secsignid' : options.secsignid.toLowerCase(), // ensure that the secsign id is lower case
 		'authsessionid' : options.authsessionid,
 		'requestid' : options.requestid
@@ -226,15 +204,25 @@ SecSignIDApi.prototype.sendRequest = function(params, callbackFunction){
 		data    : paramStr,
 		async   : this.async
 	});
+	
+	// check whether the apis in this website are already processing a task...
+	if(SecSignIDApi.task){
+		console.log("SecSignIDApi is already running task " + SecSignIDApi.task);
+		return this;
+	}
+	
+	SecSignIDApi.task = params.request;
 
 	// add functions which are called when request is done or if it failed
 	request.done(function(response, textStatus, jqXHR){
+		SecSignIDApi.task = undefined;
 		if(callbackFunction){
 			callbackFunction(instance.createResponseMap(response));
 		}
 	});
 	
 	request.fail(function(response, textStatus, jqXHR){
+		SecSignIDApi.task = undefined;
 		if(typeof globalErrorFunc !== 'undefined'){
 			globalErrorFunc(response, textStatus);
 		}
@@ -294,7 +282,7 @@ SecSignIDApi.prototype.createResponseMap = function(response){
 //
 // Checks whether a secsign id meets some requirements
 //
-SecSignIDApi.prototype.checkSecSignId = function(secSignIdString){
+SecSignIDApi.checkSecSignId = function(secSignIdString){
 	// illegal characters are e.g. #+*?!%$&(){}[]:
 	// allowed besides letter characters and numbers are only @ _ - .
 	var secSignIdCheckResult = /^[\w@_\-\.]*$/.test(secSignIdString);
@@ -302,6 +290,78 @@ SecSignIDApi.prototype.checkSecSignId = function(secSignIdString){
 	return secSignIdCheckResult;
 };
 
+
+//
+// Try to open the mobile app
+//
+SecSignIDApi.openMobileApp = function(login){
+        if(!login){
+            // login map with information about secsign id, id server etc is not set
+            return;
+        }
+        
+        var $ = jQuery;
+        login = $.extend({"appid" : "com.secsign.secsignid"}, login);
+        
+        if(login.noparam){
+            window.location = login.appid + "://returnToApp";
+            return;
+        }
+        
+        // get browser information
+        if(! $.device){ $.device = {}; }
+    	$.device.mobile = /(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i.test(navigator.userAgent);
+    	$.device.iphone = /(iPhone).*AppleWebKit.*Safari/i.test(navigator.userAgent);
+    	$.device.ipad = /(iPad).*AppleWebKit.*Safari/i.test(navigator.userAgent);
+    	$.device.android = /android/i.test(navigator.userAgent);
+    
+		if(! $.os){ $.os = {}; }
+    	$.os.iOS = {
+    	    version : -1
+    	};
+
+        if($.device.iphone || $.device.ipad){
+	    	var match = navigator.userAgent.match(/OS (\d{1,2})_/i);
+    		if(match && match[1]){
+			    $.os.iOS.version = parseInt(match[1]);
+		    }
+        }
+		
+		if(! $.browser){ $.browser = {}; }
+        $.browser.chrome = /Chrome/.test(navigator.userAgent) || /CriOS/.test(navigator.userAgent);
+        $.browser.safari = ($.browser.webkit && !$.browser.chrome); // in other browser like opera and firefox $.browser.webkit is undefined.
+        $.browser.atomic = /U;/.test(navigator.userAgent) && !$.browser.chrome && $.browser.safari;
+        $.browser.firefox = /firefox/i.test(navigator.userAgent) && $.browser.webkit == undefined;
+        $.browser.opera = /opera/i.test(navigator.userAgent) && $.browser.webkit == undefined;
+        $.browser.edge = /Windows(.*)Edge/.test(navigator.userAgent);
+
+        // encode uri to ensure that parameter in the return url are not cut off in the app.         
+        login["returnurl"] = encodeURIComponent(login["returnurl"]);
+                    
+        if ($.device.iphone)
+        {
+            // try to open the app
+            if ($.os.iOS.version >= 9){
+                window.location = login.appid + "://authenticate?secsignid=" + login["secsignid"] +
+                                  "&authsessionid=" + login["authsessionid"] + 
+                                  "&returnurl=" + login["returnurl"] + 
+                                  "&idserverurl=" + login["idserverurl"];
+            }
+            else {
+                // append an iframe to force the app being openend
+                $("body").append("<iframe style='display:none;' src='" + 
+                             login.appid + "://authenticate?secsignid=" + login["secsignid"] +
+                             "&authsessionid=" + login["authsessionid"] + 
+                             "&returnurl=" + login["returnurl"] + 
+                             "&idserverurl=" + login["idserverurl"] + "' />");
+            }
+        } else {
+            window.location = login.appid + "://authenticate?secsignid=" + login["secsignid"] + 
+                                  "&authsessionid=" + login["authsessionid"] + 
+                                  "&returnurl=" + login["returnurl"] + 
+                                  "&idserverurl=" + login["idserverurl"];
+        }
+};
 
 
 /**
